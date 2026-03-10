@@ -1,2 +1,4 @@
 # 2025QSScreen
-Screen for 2025 Quarter Scale Tractor
+Screen software for 2025 "Bandit"
+
+Developed by Joseph Mohr, Sam Meyer, & Trevor Sieberg at South Dakota State University
