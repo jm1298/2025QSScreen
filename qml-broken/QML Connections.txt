@@ -1,0 +1,75 @@
+--------------------------------------------Quick Overview of Connections--------------------------------------------
+-----------> In QML <------------
+In the code for the QML object (ex. a gauge), put the following:
+
+Component.onCompleted: {
+	backend.connectionName.connect((value) => {
+        	console.log("Received:", value);
+        	objectNameTimelineCurrentFrame = value;  // Update gauge
+	});
+}
+
+You will want to modify connectionName (name of the connection to be created) and objectName (name of the object
+with which we are connecting) accordingly. Additionally, the console.log() function is not necessary, but is
+nice when debugging.
+
+
+----------> In python <----------
+Do one of these:
+class MainWindow(QObject):
+    def __init__(self):
+    
+You might also want to put your qtimers there. But mainly, we initialize connections to qml here. It is done like
+this: connectionName = Signal(int)
+
+That is an example, where the connection is name "connectionName" and receives a integer. They will all be different,
+depending on how you set them up.
+
+Later, in one of your qTimers, you can send data to qml. Here is an example:
+
+self.connectionName.emit(int(123))
+
+Here we send the integer "123" to connectionName.
+
+When making connections, it is best to give them verbose names. Nobody wants to track down what "updateCLUPEDPOSV"
+or "updateTRRS" means. These were old names used last year, based on CANBUS IDs. If you do this I will whack your
+pp and you will regret! So avoid it. Names like "updateEngTemp" make much more sense - it updates the engine
+temperature. Do this, and you will have a fun, wonderful, and generally enjoyable experience with QML and QT.
+
+-Joseph
+
+
+-------------------------------------------------Connections to QML--------------------------------------------------
+
+Name			Datatype	Range		Function				Location			Note
+---------------------------------------------------------------------------------------------------------------------
+updateTurnRight		str		"Off", "On"	update right signal indicator		Home				send "On" or "Off" as strings
+updateTurnLeft		str		/\		update left signal indicator		/\				/\
+updateRPM		int		0-4500		update rpm gauge			Home, Drivetrain, Engine
+updateGearSelector	int		0-2		update gear selector			Home				0=N, 1=F, 2=R
+updateEngTemp		int		0-800		update engine temperature		/\
+updateFuelLevel		int		0-100		update fuel gauge			/\				is a percentage (0-100%)
+updateHydPSI		int		0-4000		update hyd. pressure gauge		/\
+updateHydTemp		int		0-260		update hyd. temp gauge			/\
+updateSpeedo		int		0-12		update spedometer			/\				divide input by 10, ex. input 12 = 1.2mph
+updateIntaketemp	str		text input	update IAT readout at screen top	Header				must add "F" to end of inputs ex. ("82" + "F")
+updateCEL		str		"Off", "On"	update engine light status		Home				send "On" or "Off" as strings
+updateOilPress		str		/\		update oil light status			/\				/\
+updateBattLight		str		/\		update battery light status		/\				/\
+updateWarnLight		str		/\		update triangle warning light		/\				/\
+updateTime		str		24hr time	update on-screen clock			Header				send preformatted string, ex. 11:36
+updateDate		str		M/D/Yr		update on-screen date readout		Header				send preformatted string, ex 4/20/1969
+updatehydHighPress	int		0-4000		update hyd high press			Drivetrain
+updateEngLoad		int		0-100		update engine load			Drivetrain, Engine
+updateAccelPos		int		0-100?		update accelerator position		Engine
+updateFuelRate		int		0-100		update fuel rate			Engine				multiply by 100. scale is 0-1. ex. 49 = 0.49
+updateOilPressGauge	int		???		update oil pressure gauge		Engine
+updateBattVolts		int		8-18		update battery voltage gague		Engine				multiply by 10. ex. 142 = 14.2
+updateBarometric	int		29-30.5		update barometric pressure gauge	Engine				multiply by 100. ex. 2987 = 29.87
+updateChargePress	int		0-400		update hydraulic charge pressure gague	Drivetrain
+updateSwashPOS		int		0-100		update swash position gauge		Drivetrain
+updateSwashLimit	int		0-100		update swash limit gauge		Drivetrain
+updatehydControlCurrent	int		0-2000		update hyd control current gauge	Drivetrain
+updateHydMotorRPM	int		0-350		update hyd motor rpm			Drivetrain
+updateHydFluidLevel	float		"Okay", "Low"	update fluid level text			Drivetrain
+updateDrivemode		int		0-2		update drivemode on header		Header				0 = norm, 1 = eco, 2 = power
